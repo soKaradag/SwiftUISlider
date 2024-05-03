@@ -21,17 +21,13 @@ struct ContentView: View {
         return window
     }
     
-    private var items: [Item] = [
+    @State private var items: [Item] = [
         Item(content: "First Chart", color: .red),
         Item(content: "Second Chart", color: .green),
         Item(content: "Third Chart", color: .blue)
     ]
     
-    var datas: [ToyShape] = [
-        .init(type: "Cube", count: 78),
-        .init(type: "Sphere", count: 24),
-        .init(type: "Pyramid", count: 46)
-    ]
+
     
     var body: some View {
         NavigationStack {
@@ -45,21 +41,14 @@ struct ContentView: View {
                                 .opacity(currentIndex == index ? currUpacity : opacity)
                                 .scaleEffect(currentIndex == index ? currScaleEffect : scaleEffect)
                                 .offset(x: CGFloat(index-currentIndex) * cardWidth.width + dragOffset, y: 0)
-                            VStack {
-                                Chart {
-                                    ForEach(datas) { data in
-                                        BarMark(x: .value("Details", data.type) , y: .value("", data.count))
-                                    }
-                                }
-                                
-                            }
-                            .padding()
-                            .frame(width: cardWidth.width - 20, height: 200)
-                            .background(.ultraThickMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                            .opacity(currentIndex == index ? currUpacity : opacity)
-                            .scaleEffect(currentIndex == index ? currScaleEffect : scaleEffect)
-                            .offset(x: CGFloat(index-currentIndex) * cardWidth.width + dragOffset, y: 0)
+                            TestView()
+                                .padding()
+                                .frame(width: cardWidth.width - 20, height: 200)
+                                .background(.ultraThickMaterial)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .opacity(currentIndex == index ? currUpacity : opacity)
+                                .scaleEffect(currentIndex == index ? currScaleEffect : scaleEffect)
+                                .offset(x: CGFloat(index-currentIndex) * cardWidth.width + dragOffset, y: 0)
  
                         }
                         .gesture(
@@ -82,9 +71,7 @@ struct ContentView: View {
                                     currUpacity = max(0.5, (1.0 - progress) + 0.1 * progress)
                                     currScaleEffect = (1.0 - progress) * 1.0 + progress * targetCurrScaleEffect
 
-                                    withAnimation {
-                                        dragOffset = value.translation.width
-                                    }
+                                    dragOffset = value.translation.width
                                 })
                                 .onEnded({ value in
                                     let threshHold: CGFloat = 50
@@ -191,4 +178,20 @@ struct ToyShape: Identifiable {
     var type: String
     var count: Double
     var id = UUID()
+}
+
+struct TestView: View {
+    @State var datas: [ToyShape] = [
+        .init(type: "Cube", count: 78),
+        .init(type: "Sphere", count: 24),
+        .init(type: "Pyramid", count: 46)
+    ]
+    
+    var body: some View {
+        Chart {
+            ForEach(datas) { data in
+                LineMark(x: .value("Details", data.type) , y: .value("", data.count))
+            }
+        }
+    }
 }
